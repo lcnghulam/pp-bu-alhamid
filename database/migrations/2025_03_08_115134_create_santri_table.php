@@ -12,13 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('santri', function (Blueprint $table) {
-            $table->integer('id')->primary();
-            $table->integer('nis')->nullable();
-            $table->char('nama_lengkap', 50)->nullable();
-            $table->date('ttl')->nullable();
+            $table->integer('nis')->primary();
+            $table->string('nama_lengkap', 50)->nullable();
+            $table->string('tempat_lahir', 30)->nullable();
+            $table->date('tgl_lahir')->nullable();
             $table->enum('gender', ['L', 'P'])->nullable();
+            $table->string('email', 100)->nullable();
             $table->string('no_hp', 15)->nullable();
             $table->text('alamat')->nullable();
+            $table->timestamps();
         });
     }
 

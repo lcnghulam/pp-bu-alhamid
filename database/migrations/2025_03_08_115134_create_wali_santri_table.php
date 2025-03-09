@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wali_santri', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->integer('id', true);
             $table->char('nama', 50)->nullable();
             $table->string('no_hp', 15)->nullable();
             $table->text('alamat')->nullable();

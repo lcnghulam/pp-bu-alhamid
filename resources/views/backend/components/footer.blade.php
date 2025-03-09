@@ -3,8 +3,7 @@
         <div class="row text-muted">
             <div class="col-6 text-start">
                 <p class="mb-0">
-                    <a href="https://adminkit.io/" target="_blank"
-                        class="text-muted"><strong>AdminKit</strong></a> &copy;
+                    &copy; Copyright 2025 | <a href="https://linktr.ee/AGADev" target="_blank" class="text-muted">AGA Dev</a> 
                 </p>
             </div>
             <div class="col-6 text-end">

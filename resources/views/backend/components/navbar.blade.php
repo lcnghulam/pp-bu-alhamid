@@ -228,12 +228,13 @@
                     </div>
                 </a>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-icon pe-md-0 dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                    <i class="fa-solid fa-circle-user"></i>
+            <li class="nav-item dropdown d-flex align-items-center pt-1">
+                <a class="nav-icon pe-md-0 dropdown-toggle d-flex align-items-center text-decoration-none" href="#" data-bs-toggle="dropdown">
+                    <i class="fa-solid fa-circle-user pe-2"></i>
+                    <span class="align-middle fs-4">{{ Auth::user()->name }}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end">
-                    <a class='dropdown-item' href='pages-profile.html'><i class="align-middle me-1"
+                    <a class='dropdown-item' href='{{ route('profile.edit') }}'><i class="align-middle me-1"
                             data-feather="user"></i> Profile</a>
                     <a class="dropdown-item" href="#"><i class="align-middle me-1"
                             data-feather="pie-chart"></i> Analytics</a>
@@ -246,7 +247,10 @@
                     <div class="dropdown-divider"></div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                    <button class="dropdown-item" onclick="event.preventDefault();this.closest('form').submit();">Log out</button>
+                    <button class="dropdown-item" onclick="event.preventDefault();this.closest('form').submit();">
+                        Log out 
+                        <i class="align-middle" data-feather="log-out"></i>
+                    </button>
                     </form>
                 </div>
             </li>

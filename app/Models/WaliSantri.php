@@ -17,8 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $alamat
  * @property string|null $status
  * @property int|null $idSantri
- * 
- * @property Santri|null $santri
  *
  * @package App\Models
  */
@@ -26,11 +24,9 @@ class WaliSantri extends Model
 {
 	protected $connection = 'mysql';
 	protected $table = 'wali_santri';
-	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [
-		'id' => 'int',
 		'idSantri' => 'int'
 	];
 
@@ -41,9 +37,4 @@ class WaliSantri extends Model
 		'status',
 		'idSantri'
 	];
-
-	public function santri()
-	{
-		return $this->belongsTo(Santri::class, 'idSantri');
-	}
 }

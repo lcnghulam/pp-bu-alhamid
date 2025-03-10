@@ -10,6 +10,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     //Data Santri
     Route::get('/data-santri', [DataSantriController::class, 'index'])->name('data-santri');
+    Route::get('/data-santri/data', [DataSantriController::class, 'getData'])->name('data-santri.data');
     Route::get('/data-santri/edit', [DataSantriController::class, 'edit'])->name('data-santri.edit');
 });
 

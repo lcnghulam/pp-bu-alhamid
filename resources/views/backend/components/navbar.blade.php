@@ -231,7 +231,7 @@
             <li class="nav-item dropdown d-flex align-items-center pt-1">
                 <a class="nav-icon pe-md-0 dropdown-toggle d-flex align-items-center text-decoration-none" href="#" data-bs-toggle="dropdown">
                     <i class="fa-solid fa-circle-user pe-2"></i>
-                    <span class="align-middle fs-4">{{ Auth::user()->name }}</span>
+                    <span class="align-middle fs-4">{{ Auth::user()->nickname }}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end">
                     <a class='dropdown-item' href='{{ route('profile.edit') }}'><i class="align-middle me-1"

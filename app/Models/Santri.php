@@ -38,6 +38,7 @@ class Santri extends Model
 	];
 
 	protected $fillable = [
+		'foto',
 		'nama_lengkap',
 		'tempat_lahir',
 		'tgl_lahir',

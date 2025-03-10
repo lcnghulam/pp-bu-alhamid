@@ -2185,6 +2185,11 @@ progress {
     border-top-width: 0
 }
 
+.table-striped tr td:last-child button{
+    background: none;
+    border: none
+}
+
 .table-striped-columns>:not(caption)>tr>:nth-child(2n),
 .table-striped>tbody>tr:nth-of-type(odd)>* {
     --bs-table-color-type: var(--bs-table-striped-color);
@@ -18481,11 +18486,11 @@ body[data-sidebar-layout=compact][data-sidebar-position=right] .sidebar.collapse
     border-top: 0
 }
 
-.table-action a {
+.table-action button {
     color: #6c757d
 }
 
-.table-action a:hover {
+.table-action button:hover {
     color: #212529
 }
 

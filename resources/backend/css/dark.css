@@ -2185,10 +2185,15 @@ progress {
     border-top-width: 0
 }
 
+.table-striped tr td:last-child button{
+    background: none;
+    border: none
+}
+
 .table-striped-columns>:not(caption)>tr>:nth-child(2n),
 .table-striped>tbody>tr:nth-of-type(odd)>* {
     --bs-table-color-type: var(--bs-table-striped-color);
-    --bs-table-bg-type: var(--bs-table-striped-bg)
+    --bs-table-bg-type: var(--bs-table-striped-bg)!important
 }
 
 .table-active {
@@ -18464,11 +18469,11 @@ body[data-sidebar-layout=compact][data-sidebar-position=right] .sidebar.collapse
     border-top: 0
 }
 
-.table-action a {
+.table-action button {
     color: #a7abb1
 }
 
-.table-action a:hover {
+.table-action button:hover {
     color: #e9eaec
 }
 

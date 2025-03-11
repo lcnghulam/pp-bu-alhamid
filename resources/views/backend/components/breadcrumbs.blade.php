@@ -1,3 +1,7 @@
+@php
+    $navData = getNavigationData();
+@endphp
+
 <div class="card mt-3 mb-2">
     @php
         $segments = request()->segments();
@@ -8,23 +12,12 @@
     <nav class="d-flex align-items-center ps-3" aria-label="breadcrumb">
         <i class="align-middle" data-feather="chevron-right"></i>
         <ol class="breadcrumb mb-0">
-            <!-- Root: Dashboard -->
-            <li class="breadcrumb-item">
-                <a href="{{ route('dashboard') }}">Dashboard</a>
-            </li>
-
-            @foreach ($segments as $index => $segment)
-                @php
-                    $url .= '/' . $segment;
-                    $isLast = $index === $lastIndex;
-                    $segmentName = ucwords(str_replace('-', ' ', $segment));
-                @endphp
-
-                <li class="breadcrumb-item {{ $isLast ? 'active' : '' }}">
-                    @if (!$isLast)
-                        <a href="{{ url($url) }}">{{ $segmentName }}</a>
+            @foreach ($navData['breadcrumbs'] as $breadcrumb)
+                <li class="breadcrumb-item {{ $breadcrumb['url'] ? '' : 'active' }}">
+                    @if ($breadcrumb['url'])
+                        <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['name'] }}</a>
                     @else
-                        {{ $title ?? $segmentName }}  {{-- 🔥 Perubahan di sini! --}}
+                        {{ $title ?? $breadcrumb['name'] }} {{-- 🔥 Bisa override --}}
                     @endif
                 </li>
             @endforeach

@@ -11,7 +11,10 @@ Route::middleware(['auth'])->group(function () {
     //Data Santri
     Route::get('/data-santri', [DataSantriController::class, 'index'])->name('data-santri');
     Route::get('/data-santri/data', [DataSantriController::class, 'getData'])->name('data-santri.data');
+    Route::get('/data-santri/tambah', [DataSantriController::class, 'tambah'])->name('data-santri.tambah');
+    Route::post('/data-santri/store', [DataSantriController::class, 'store'])->name('data-santri.store');
     Route::get('/data-santri/edit', [DataSantriController::class, 'edit'])->name('data-santri.edit');
+    Route::delete('/data-santri/destroy', [DataSantriController::class, 'destroy'])->name('data-santri.destroy');
 });
 
 

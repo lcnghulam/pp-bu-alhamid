@@ -33,11 +33,12 @@ class Santri extends Model
 	public $incrementing = false;
 
 	protected $casts = [
-		'nis' => 'int',
 		'tgl_lahir' => 'datetime'
 	];
 
 	protected $fillable = [
+		'nis',
+		'nik',
 		'foto',
 		'nama_lengkap',
 		'tempat_lahir',
@@ -45,6 +46,8 @@ class Santri extends Model
 		'gender',
 		'email',
 		'no_hp',
-		'alamat'
+		'alamat',
+		'tgl_masuk',
+		'tgl_keluar'
 	];
 }

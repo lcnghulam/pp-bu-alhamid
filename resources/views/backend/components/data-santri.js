@@ -27,7 +27,7 @@ scriptJQuery.onload = function () {
                                 $(document).ready(function () {
                                     console.log("✅ DataTables siap digunakan!");
 
-                                    var tableSantri = $("#tabelSantri").DataTable({
+                                    var tableSantri = $("#tabelDataSantri").DataTable({
                                         processing: true,
                                         serverSide: true,
                                         dom: 
@@ -83,10 +83,11 @@ scriptJQuery.onload = function () {
                                             { data: "foto", name: "foto", orderable: false, searchable: false },
                                             { data: "nama_santri", name: "nama_santri" },
                                             { data: "data_santri", name: "data_santri" },
+                                            { data: "status", name: "status" },
                                             { data: "aksi", name: "aksi", orderable: false, searchable: false }
                                         ],
                                         drawCallback: function () {
-                                            $("#tabelSantri tbody td:nth-child(4)").addClass("table-action");
+                                            $("#tabelDataSantri tbody td:nth-child(5)").addClass("table-action");
 
                                             // Pastikan Feather Icons diganti ulang
                                             if (typeof feather !== "undefined") {
@@ -96,7 +97,7 @@ scriptJQuery.onload = function () {
                                     });
 
                                     // Tambahkan tombol export ke dalam UI
-                                    tableSantri.buttons().container().appendTo("#tabelSantri_wrapper .col-md-12:eq(0)");
+                                    tableSantri.buttons().container().appendTo("#tabelDataSantri_wrapper .col-md-12:eq(0)");
                                 });
                             });
                         });
@@ -117,3 +118,47 @@ function loadScript(src, callback) {
     script.onload = callback;
     document.body.appendChild(script);
 }
+
+//Btn Tambah Data Santri
+$(document).ready(function(){
+    $('#btnTambah').on('click',function(){
+        window.location.href = "data-santri/tambah";
+    })
+
+    $('#btnRefresh').on('click', function () {
+        $('#tabelDataSantri').DataTable().ajax.reload(); // Reload DataTable
+    });
+
+    $('#tabelDataSantri').on('click', '#btnDestroy', function () {
+        let nis = $(this).data('id'); // Ambil NIS dari atribut data-id
+    
+        Swal.fire({
+            title: "Hapus Data Santri?",
+            text: "Data santri yg dipilih akan dihapus!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Ya, hapus!",
+            cancelButtonText: "Batal"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/data-santri/destroy",
+                    type: "DELETE",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'), // CSRF Token
+                        nis: nis
+                    },
+                    success: function (response) {
+                        Swal.fire("Data Santri Telah Dihapus!", response.message, "success");
+                        $('#tabelDataSantri').DataTable().ajax.reload(); // Reload DataTable
+                    },
+                    error: function (xhr) {
+                        Swal.fire("Error!", "Gagal menghapus Data Santri.", "error");
+                    }
+                });
+            }
+        });
+    });    
+})

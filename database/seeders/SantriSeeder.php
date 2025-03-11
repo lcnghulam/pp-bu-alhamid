@@ -23,7 +23,8 @@ class SantriSeeder extends Seeder
 
         foreach (range(1, 50) as $index) {
             DB::table('santri')->insert([
-                'nis' => $index,
+                'nis' => $faker->creditCardNumber,
+                'nik' => $faker->creditCardNumber,
                 'nama_lengkap' => $faker->name,
                 'tempat_lahir' => $faker->city,
                 'tgl_lahir' => $faker->date('Y-m-d'),
@@ -31,6 +32,9 @@ class SantriSeeder extends Seeder
                 'gender' => $faker->randomElement(['L', 'P']),
                 'email' => $faker->email,
                 'no_hp' => $faker->phoneNumber,
+                'tgl_masuk' => $faker->date,
+                // 'tgl_keluar' => rand(0, 1) ? $faker->date() : null, // 50% null, 50% isi tanggal
+                'tgl_keluar' => rand(1, 10) > 3 ? $faker->date() : null, // 70% isi tanggal, 30% null
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

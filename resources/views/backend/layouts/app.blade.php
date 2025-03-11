@@ -7,11 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Dashboard Pondok Bahrul Ulum Al-Hamid">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="preconnect" href="https://fonts.gstatic.com/">
     <link rel="shortcut icon" href="{{ Vite::asset('resources/backend/img/logo.ico') }}" />
-
-    <link rel="canonical" href="index.html" />
 
     <title>{{ $attributes->get('title') ? $attributes->get('title') . ' | Dashboard' : 'Dashboard' }}</title>
 
@@ -34,8 +33,9 @@
     'resources/backend/js/settings.js',
     'resources/backend/js/vite.theme.js'
     ])
-
-
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body data-theme="default" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default">
@@ -53,8 +53,10 @@
                 @include('backend.components.breadcrumbs', ['title' => $attributes->get('title')])
             @endif
 
-            <main class="content pt-3">
-                {{ $slot }}
+            <main class="content pt-4">
+                <div class="container-fluid">
+                    {{ $slot }}
+                </div>
             </main>
 
 
@@ -63,9 +65,19 @@
         </div>
     </div>
 
-    {{-- <script src="js/app.js"></script> --}}
     <script src="{{ Vite::asset('resources/backend/js/app.js') }}"></script>
-
+    @if(session('success'))
+        <script>
+            window.onload = function() {
+                Swal.fire({
+                    title: "Login Berhasil!",
+                    text: "Selamat datang di Dashboard!",
+                    icon: "success",
+                    timer: 5000
+                });
+            };
+        </script>
+    @endif
 </body>
 
 </html>

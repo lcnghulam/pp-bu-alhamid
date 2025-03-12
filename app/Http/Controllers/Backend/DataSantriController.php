@@ -107,7 +107,7 @@ class DataSantriController extends Controller
             'tgl_lahir'     => 'required|date',
             'gender'        => 'required|in:L,P',
             'email'         => 'nullable|email|unique:santri,email',
-            'no_hp'         => 'required|numeric',
+            'no_hp'         => 'required|string|max:255',
             'alamat'        => 'required|string',
             'foto'          => 'nullable|image|mimes:jpg,png,jpeg|max:200',
             'tgl_masuk'     => 'required|date',
@@ -133,13 +133,68 @@ class DataSantriController extends Controller
         ]);
     }
 
-    public function edit()
+    public function edit(Request $request)
     {
-        return view('backend.pages.data-santri.edit',
-        [
-            'title' => 'Edit Data Santri'
+        $nis = $request->query('nis'); // Ambil nis dari URL parameter
+        $dataEdit = Santri::find($nis);
+
+        return view('backend.pages.data-santri.edit', [
+            'title' => 'Edit Data Santri',
+            'dataEdit' => $dataEdit
         ]);
     }
+
+    public function update(Request $request)
+    {
+        // Ambil data santri berdasarkan ID
+        $nis = $request->query('nis'); // Ambil nis dari URL parameter
+        // dd($nis);
+        $santri = Santri::findOrFail($nis);
+        // dd($santri);
+
+        // Validasi input dari formData
+        $validated = $request->validate([
+            'nis'           => 'required|numeric|unique:santri,nis,' . $nis . ',nis',
+            'nik'           => 'required|numeric|unique:santri,nik,' . $nis . ',nis',
+            'nama_lengkap'  => 'required|string|max:255',
+            'tempat_lahir'  => 'required|string|max:100',
+            'tgl_lahir'     => 'required|date',
+            'gender'        => 'required|in:L,P',
+            'email'         => 'nullable|email|unique:santri,email,' . $nis . ',nis',
+            'no_hp'         => 'required|string|max:255',
+            'alamat'        => 'required|string',
+            'foto'          => 'nullable|image|mimes:jpg,png,jpeg|max:200',
+            'tgl_masuk'     => 'required|date',
+            'tgl_keluar'    => 'nullable|date|after_or_equal:tgl_masuk',
+        ]);
+
+        // Simpan hanya data yang berubah
+        $changes = [];
+        foreach ($validated as $key => $value) {
+            if (!is_null($value) && $santri->$key != $value) {
+                $changes[$key] = $value;
+            }
+        }
+
+        // Jika ada file foto baru diunggah
+        if ($request->hasFile('foto')) {
+            $filename = "{$santri->nis}." . $request->file('foto')->getClientOriginalExtension();
+            $request->file('foto')->storeAs('data-santri', $filename, 'public');
+            $changes['foto'] = $filename;
+        }
+
+        // Update hanya jika ada perubahan
+        if (!empty($changes)) {
+            $santri->update($changes);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil diperbarui!',
+            'updated_fields' => array_keys($changes), // Menampilkan field yang berubah
+        ]);
+    }
+
 
     public function destroy(Request $request)
     {

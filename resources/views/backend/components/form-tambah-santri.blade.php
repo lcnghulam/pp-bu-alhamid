@@ -34,7 +34,7 @@
         </div>
         <div class="mb-3 col-md-6">
             <label class="form-label" for="no_hp">No. HP*</label>
-            <input type="number" class="form-control" id="noHP" name="no_hp" placeholder="0812345678" required>
+            <input type="text" class="form-control" id="noHP" name="no_hp" placeholder="0812345678" required>
         </div>
         <div class="mb-3">
             <label class="form-label" for="alamat">Alamat*</label>
@@ -46,12 +46,15 @@
             <span class="text-muted fst-italic" style="font-size: 0.6rem; color: #ff5555 !important;">Perhatian: Ukuran file maksimal 200 KB</span>
         </div>
         <div class="mb-3 col-md-6">
-            <label class="form-label" for="tgl_lahir">Tgl Masuk*</label>
+            <label class="form-label" for="tgl_masuk">Tgl Masuk*</label>
             <input type="text" class="form-control flatpickr-human" id="tglMasuk" name="tgl_masuk" placeholder="Pilih tanggal.." required />
         </div>
         <div class="mb-3 col-md-6">
-            <label class="form-label" for="tgl_lahir">Tgl Keluar</label>
-            <input type="text" class="form-control flatpickr-human" id="tglKeluar" name="tgl_keluar" placeholder="Pilih tanggal.." />
+            <label class="form-label" for="tgl_keluar">Tgl Keluar</label>
+            <div class="d-flex">
+                <input type="text" class="form-control flatpickr-human" id="tglKeluar" name="tgl_keluar" placeholder="Pilih tanggal.."/>
+                <button type="button" id="btnResetTGK" class="btn btn-danger ms-1"><i class="align-middle" data-feather="rotate-ccw"></i></button>
+            </div>
         </div>
     </div>
     <div class="d-flex justify-content-between">

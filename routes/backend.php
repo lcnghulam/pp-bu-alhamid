@@ -13,7 +13,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/data-santri/data', [DataSantriController::class, 'getData'])->name('data-santri.data');
     Route::get('/data-santri/tambah', [DataSantriController::class, 'tambah'])->name('data-santri.tambah');
     Route::post('/data-santri/store', [DataSantriController::class, 'store'])->name('data-santri.store');
+    // Route::match(['get', 'post'], '/data-santri/edit', [DataSantriController::class, 'edit'])->name('data-santri.edit');
     Route::get('/data-santri/edit', [DataSantriController::class, 'edit'])->name('data-santri.edit');
+    Route::patch('/data-santri/update', [DataSantriController::class, 'update'])->name('data-santri.update');
     Route::delete('/data-santri/destroy', [DataSantriController::class, 'destroy'])->name('data-santri.destroy');
 });
 

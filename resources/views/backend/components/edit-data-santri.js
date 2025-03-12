@@ -1,3 +1,4 @@
+
 $(document).ready(function(){
     $("label.form-label").html(function(_, html) {
         return html.replace("*", "<span style='color:red;'>*</span>");
@@ -47,9 +48,19 @@ $(document).ready(function(){
             $(this).addClass("is-invalid").removeClass("is-valid");
         }
     });
+
+    // Perubahan langsung saat user mengetik / memilih input
+    $("input[required], select[required], textarea[required]").on("input change", function () {
+        if ($(this).val().trim() !== "" && $(this).val() !== "Pilih...") {
+            $(this).removeClass("is-invalid").addClass("is-valid");
+            this.setCustomValidity("");
+        } else {
+            $(this).addClass("is-invalid").removeClass("is-valid");
+        }
+    });
     
     // Saat user mengetik di form Tambah Santri, otomatis isi form Preview Santri
-    $("#formTambahSantri input, #formTambahSantri textarea, #formTambahSantri select").on("input change", function () {
+    $("#formEditSantri input, #formEditSantri textarea, #formEditSantri select").on("input change", function () {
         let inputId = $(this).attr("id"); // Ambil ID input yang diketik
         let previewId = "#PV" + inputId; // Ubah ke ID form preview (tambah prefix 'PV')   
 
@@ -69,6 +80,12 @@ $(document).ready(function(){
         altInput: true,
         altFormat: "j F Y",
         dateFormat: "Y-m-d",
+        onReady: function (selectedDates, dateStr, instance) {
+            let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
+    
+            // Update preview dengan format yang sama
+            $("#PVtgl_lahir").val(inputAlt.val());
+        },
         onOpen: function (selectedDates, dateStr, instance) {
             instance.currentYear = 2000; // Set tampilan awal ke tahun 2000
             instance.redraw();
@@ -85,6 +102,12 @@ $(document).ready(function(){
         altInput: true,
         altFormat: "j F Y",
         dateFormat: "Y-m-d",
+        onReady: function (selectedDates, dateStr, instance) {
+            let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
+    
+            // Update preview dengan format yang sama
+            $("#PVtgl_masuk").val(inputAlt.val());
+        },
         onChange: function (selectedDates, dateStr, instance) {
             let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
     
@@ -97,6 +120,12 @@ $(document).ready(function(){
         altInput: true,
         altFormat: "j F Y",
         dateFormat: "Y-m-d",
+        onReady: function (selectedDates, dateStr, instance) {
+            let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
+    
+            // Update preview dengan format yang sama
+            $("#PVtgl_keluar").val(inputAlt.val());
+        },
         onChange: function (selectedDates, dateStr, instance) {
             let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
     
@@ -136,19 +165,8 @@ $(document).ready(function(){
         }
     });
 
-    function resetForm(){
-        $('#formTambahSantri')[0].reset();
-        $('#formPreviewDataSantri')[0].reset();
-
-        // Hapus semua kelas validasi
-        $('#formTambahSantri').find('.is-valid, .is-invalid').removeClass('is-valid is-invalid');
-
-        // Reset gambar preview ke default
-        $('#PVfoto').attr('src', blankProfileUrl);
-    }
-
-    // Submit & Validation
-    $('#formTambahSantri').on('submit', function(event){
+    // Submit & Validasi Submit
+    $('#formEditSantri').on('submit', function(event){
         event.preventDefault();
         let isValid = true;
     
@@ -163,23 +181,30 @@ $(document).ready(function(){
         });
     
         if (!isValid) {
-            e.preventDefault(); // Hentikan submit kalau ada error
+            event.preventDefault();
             $(this).find(".is-invalid").first().focus();
+            return;
         }
+    
+        let formData = new FormData($('#formEditSantri')[0]);
+        let urlParams = new URLSearchParams(window.location.search);
+        let oldNis = urlParams.get('nis'); // Ambil dari ?nis= di URL
 
-        let formData = new FormData($('#formTambahSantri')[0]);
-
+        // Ambil NIS baru dari input form
+        let newNis = $('#nis').val(); 
+        formData.append('_method', 'PATCH');
+    
         Swal.fire({
             icon: "info",
-            title: "Sudah dicek dengan betul datanya?",
+            title: "Yakin ingin mengubah data?",
             showDenyButton: true,
-            confirmButtonText: "Ya, Sudah!",
-            denyButtonText: `Batal`
-          }).then((result) => {
+            confirmButtonText: "Ya, Simpan!",
+            denyButtonText: "Batal"
+        }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
                     type: "POST",
-                    url: "/data-santri/store",
+                    url: "/data-santri/update?nis=" + oldNis, // Pakai query string NIS
                     data: formData,
                     processData: false,
                     contentType: false,
@@ -187,14 +212,17 @@ $(document).ready(function(){
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
-                        if (response.success) {
-                            Swal.fire({
-                                icon: "success",
-                                title: "Sukses!",
-                                text: response.message
-                            }).then(() => {
-                                resetForm();
-                            });
+                        Swal.fire({
+                            icon: "success",
+                            title: "Berhasil!",
+                            text: response.message
+                        });
+
+                        // Jika NIS berubah, update URL tanpa reload
+                        if (newNis !== oldNis) {
+                            let newUrl = new URL(window.location.href);
+                            newUrl.searchParams.set('nis', newNis);
+                            window.history.replaceState(null, '', newUrl); // Ubah URL tanpa reload
                         }
                     },
                     error: function(xhr) {
@@ -204,19 +232,24 @@ $(document).ready(function(){
                             text: xhr.responseJSON.message || "Terjadi kesalahan."
                         });
                     }
-                });                
+                });
             } else if (result.isDenied) {
-              Swal.fire("Changes are not saved", "", "info");
+                Swal.fire("Perubahan dibatalkan", "", "info");
             }
         });
-    })
-
+    });
 
     $('#btnResetTGK').on('click', function(){
         const $tglKeluar = flatpickr("#tglKeluar", {
             altInput: true,
             altFormat: "j F Y",
             dateFormat: "Y-m-d",
+            onReady: function (selectedDates, dateStr, instance) {
+                let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
+        
+                // Update preview dengan format yang sama
+                $("#PVtgl_keluar").val(inputAlt.val());
+            },
             onChange: function (selectedDates, dateStr, instance) {
                 let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
         
@@ -227,13 +260,9 @@ $(document).ready(function(){
         
         $tglKeluar.clear();
     })
+    
 
     $("#btnBatal").on("click", function () {
         window.location.href = "/data-santri";
-    });
-    
-
-    $('#btnReset').click(function () {
-        resetForm();
     });
 })

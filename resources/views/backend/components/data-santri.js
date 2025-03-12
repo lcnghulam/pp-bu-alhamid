@@ -129,6 +129,22 @@ $(document).ready(function(){
         $('#tabelDataSantri').DataTable().ajax.reload(); // Reload DataTable
     });
 
+    $('#tabelDataSantri').on('click', '#btnEdit', function(){
+        let nis = $(this).data('id');
+
+        if (!nis) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "NIS tidak ditemukan!",
+            });
+            return;
+        } else {
+            window.location.href = "/data-santri/edit?nis=" + nis;
+        } 
+    
+    });    
+
     $('#tabelDataSantri').on('click', '#btnDestroy', function () {
         let nis = $(this).data('id'); // Ambil NIS dari atribut data-id
     

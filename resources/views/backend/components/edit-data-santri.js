@@ -116,23 +116,23 @@ $(document).ready(function(){
         }
     });
 
-    flatpickr("#tglKeluar", {
-        altInput: true,
-        altFormat: "j F Y",
-        dateFormat: "Y-m-d",
-        onReady: function (selectedDates, dateStr, instance) {
-            let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
-    
-            // Update preview dengan format yang sama
-            $("#PVtgl_keluar").val(inputAlt.val());
-        },
-        onChange: function (selectedDates, dateStr, instance) {
-            let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
-    
-            // Update preview dengan format yang sama
-            $("#PVtgl_keluar").val(inputAlt.val());
-        }
-    });
+    const $tglKeluar = flatpickr("#tglKeluar", {
+            altInput: true,
+            altFormat: "j F Y",
+            dateFormat: "Y-m-d",
+            onReady: function (selectedDates, dateStr, instance) {
+                let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
+        
+                // Update preview dengan format yang sama
+                $("#PVtgl_keluar").val(inputAlt.val());
+            },
+            onChange: function (selectedDates, dateStr, instance) {
+                let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
+        
+                // Update preview dengan format yang sama
+                $("#PVtgl_keluar").val(inputAlt.val());
+            }
+        });
 
     // Upload & Preview Foto dengan Validasi Ukuran Maksimal 200KB
     let fotoInput = document.getElementById("foto");
@@ -240,23 +240,6 @@ $(document).ready(function(){
     });
 
     $('#btnResetTGK').on('click', function(){
-        const $tglKeluar = flatpickr("#tglKeluar", {
-            altInput: true,
-            altFormat: "j F Y",
-            dateFormat: "Y-m-d",
-            onReady: function (selectedDates, dateStr, instance) {
-                let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
-        
-                // Update preview dengan format yang sama
-                $("#PVtgl_keluar").val(inputAlt.val());
-            },
-            onChange: function (selectedDates, dateStr, instance) {
-                let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
-        
-                // Update preview dengan format yang sama
-                $("#PVtgl_keluar").val(inputAlt.val());
-            }
-        });
         
         $tglKeluar.clear();
     })

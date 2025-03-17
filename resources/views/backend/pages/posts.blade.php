@@ -14,7 +14,7 @@
                     <button id="btnRefresh" class="btn btn-secondary mb-3">
                         <i class="fa-solid fa-rotate-left"></i> Refresh
                     </button>
-                    @include('backend.components.data-santri-table')
+                    @include('backend.components.posts-table')
                 </div>
             </div>
         </div>
@@ -22,5 +22,5 @@
     <script>
         var dataTables = @json(Vite::asset('resources/backend/js/datatables.js'))
     </script>
-    @vite('resources/views/backend/components/data-santri.js')
+    @vite('resources/views/backend/components/posts.js')
 </x-backend-layout>

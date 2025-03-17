@@ -93,7 +93,7 @@ $(document).ready(function(){
         }
     });
 
-    flatpickr("#tglKeluar", {
+    const $tglKeluar = flatpickr("#tglKeluar", {
         altInput: true,
         altFormat: "j F Y",
         dateFormat: "Y-m-d",
@@ -213,18 +213,6 @@ $(document).ready(function(){
 
 
     $('#btnResetTGK').on('click', function(){
-        const $tglKeluar = flatpickr("#tglKeluar", {
-            altInput: true,
-            altFormat: "j F Y",
-            dateFormat: "Y-m-d",
-            onChange: function (selectedDates, dateStr, instance) {
-                let inputAlt = $(instance.altInput); // Input alternatif (yang terlihat)
-        
-                // Update preview dengan format yang sama
-                $("#PVtgl_keluar").val(inputAlt.val());
-            }
-        });
-        
         $tglKeluar.clear();
     })
 

@@ -27,6 +27,18 @@
                     <span class="align-middle">Data Santri</span>
                 </a>
             </li>
+            <li class="sidebar-item {{ in_array('jadwal', $navData['activeRoutes']) ? 'active' : '' }}">
+                <a class='sidebar-link' href='{{ route('jadwal') }}'>
+                    <i class="align-middle" data-feather="calendar"></i> 
+                    <span class="align-middle">Jadwal</span>
+                </a>
+            </li>
+            <li class="sidebar-item {{ in_array('posts', $navData['activeRoutes']) ? 'active' : '' }}">
+                <a class='sidebar-link' href='{{ route('posts') }}'>
+                    <i class="align-middle" data-feather="edit-3"></i> 
+                    <span class="align-middle">Posts</span>
+                </a>
+            </li>
         </ul>
     </div>
 </nav>

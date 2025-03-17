@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\PostsSubcategory;
 use App\Models\Santri;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Carbon;
@@ -26,69 +27,60 @@ class DataSantriController extends Controller
 
     public function getData(Request $request)
     {
-        if (!$request->ajax()) {
-            return response()->json(['error' => 'Invalid Request'], 400);
+        // $data = Santri::all();
+        // dd($data);
+        try {
+            return Datatables::of(Santri::query())
+                ->addColumn('foto', function ($row) {
+                    if (!empty($row->foto)) {
+                        $fotoUrl = asset('storage/data-santri/' . htmlspecialchars($row->foto));
+                        return '<img src="' . $fotoUrl . '" width="50" class="rounded">';
+                    }
+                    return '<span class="badge bg-secondary">No Image</span>';
+                })                      
+                ->addColumn('nama_santri', function ($row) {
+                    return $row->nama_lengkap;
+                })
+                ->addColumn('data_santri', function ($row) {
+                    $gender = $row->gender == 'L' ? 'Laki-Laki' : 'Perempuan';
+    
+                    return "<strong>NIS:</strong> {$row->nis} <br>
+                            <strong>NIK:</strong> {$row->nik} <br>
+                            <strong>Nama:</strong> {$row->nama_lengkap} <br>
+                            <strong>TTL:</strong> {$row->tempat_lahir}, " . date('d-m-Y', strtotime($row->tgl_lahir)) . " <br>
+                            <strong>Gender:</strong> " . $gender . " <br>
+                            <strong>Alamat:</strong> {$row->alamat} <br>
+                            <strong>Email:</strong> {$row->email} <br>
+                            <strong>No HP:</strong> {$row->no_hp}";
+                })
+                ->addColumn('status', function ($row) {
+                    $tgl_masuk = $row->tgl_masuk ? date('d-m-Y', strtotime($row->tgl_masuk)) : '-';
+                    $tgl_keluar = $row->tgl_keluar ? date('d-m-Y', strtotime($row->tgl_keluar)) : '-';
+                
+                    $status = "<span class='badge bg-success'>Aktif</span>"; // Default status aktif
+                
+                    // Jika tgl_keluar ada dan lebih kecil dari hari ini, set status non-aktif
+                    if ($row->tgl_keluar && Carbon::parse($row->tgl_keluar)->lt(Carbon::today())) {
+                        $status = "<span class='badge bg-danger'>Non-Aktif</span>";
+                    }
+                
+                    return "<strong>Tgl Masuk:</strong> " . $tgl_masuk . " <br>
+                            <strong>Tgl Keluar:</strong> " . $tgl_keluar . "<br>
+                            <strong>Status: </strong>" . $status;
+                })
+                ->addColumn('aksi', function ($row) {
+                    return '<button data-id="' . $row->nis . '" id="btnEdit"><i class="align-middle" data-feather="edit-2"></i></button>
+                            <button data-id="' . $row->nis . '" id="btnDestroy"><i class="align-middle" data-feather="trash"></i></button>';
+                })
+                ->rawColumns(['foto', 'nama_santri', 'data_santri', 'status', 'aksi']) // Agar HTML bisa dirender dengan benar
+                ->make(true);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
     
-        return Datatables::of(Santri::query())
-            ->filter(function ($query) use ($request) {
-                if (!empty($request->search['value'])) {
-                    $search = $request->search['value'];
-                    $query->where('nama_lengkap', 'LIKE', "%{$search}%")
-                        ->orWhere('nis', 'LIKE', "%{$search}%")
-                        ->orWhere('nik', 'LIKE', "%{$search}%")
-                        ->orWhere('tempat_lahir', 'LIKE', "%{$search}%")
-                        ->orWhere('tgl_lahir', 'LIKE', "%{$search}%")
-                        ->orWhere('alamat', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%")
-                        ->orWhere('no_hp', 'LIKE', "%{$search}%")
-                        ->orWhere('tgl_masuk', 'LIKE', "%{$search}%")
-                        ->orWhere('tgl_keluar', 'LIKE', "%{$search}%");
-                }
-            })
-            ->addColumn('foto', function ($row) {
-                if (!empty($row->foto)) {
-                    $fotoUrl = asset('storage/data-santri/' . htmlspecialchars($row->foto));
-                    return '<img src="' . $fotoUrl . '" width="50" class="rounded">';
-                }
-                return '<span class="badge bg-secondary">No Image</span>';
-            })                      
-            ->addColumn('nama_santri', function ($row) {
-                return $row->nama_lengkap;
-            })
-            ->addColumn('data_santri', function ($row) {
-                $gender = $row->gender == 'L' ? 'Laki-Laki' : 'Perempuan';
-
-                return "<strong>NIS:</strong> {$row->nis} <br>
-                        <strong>NIK:</strong> {$row->nik} <br>
-                        <strong>Nama:</strong> {$row->nama_lengkap} <br>
-                        <strong>TTL:</strong> {$row->tempat_lahir}, " . date('d-m-Y', strtotime($row->tgl_lahir)) . " <br>
-                        <strong>Gender:</strong> " . $gender . " <br>
-                        <strong>Alamat:</strong> {$row->alamat} <br>
-                        <strong>Email:</strong> {$row->email} <br>
-                        <strong>No HP:</strong> {$row->no_hp}";
-            })
-            ->addColumn('status', function ($row) {
-                $tgl_masuk = $row->tgl_masuk ? date('d-m-Y', strtotime($row->tgl_masuk)) : '-';
-                $tgl_keluar = $row->tgl_keluar ? date('d-m-Y', strtotime($row->tgl_keluar)) : '-';
-            
-                $status = "<span class='badge bg-success'>Aktif</span>"; // Default status aktif
-            
-                // Jika tgl_keluar ada dan lebih kecil dari hari ini, set status non-aktif
-                if ($row->tgl_keluar && Carbon::parse($row->tgl_keluar)->lt(Carbon::today())) {
-                    $status = "<span class='badge bg-danger'>Non-Aktif</span>";
-                }
-            
-                return "<strong>Tgl Masuk:</strong> " . $tgl_masuk . " <br>
-                        <strong>Tgl Keluar:</strong> " . $tgl_keluar . "<br>
-                        <strong>Status: </strong>" . $status;
-            })
-            ->addColumn('aksi', function ($row) {
-                return '<button data-id="' . $row->nis . '" id="btnEdit"><i class="align-middle" data-feather="edit-2"></i></button>
-                        <button data-id="' . $row->nis . '" id="btnDestroy"><i class="align-middle" data-feather="trash"></i></button>';
-            })
-            ->rawColumns(['foto', 'nama_santri', 'data_santri', 'status', 'aksi']) // Agar HTML bisa dirender dengan benar
-            ->make(true);
         // dd(request()->all());
     }
 
@@ -199,6 +191,7 @@ class DataSantriController extends Controller
     public function destroy(Request $request)
     {
         $santri = Santri::find($request->nis);
+        
 
         if (!$santri) {
             return response()->json(['message' => 'Data tidak ditemukan!'], 404);
@@ -212,10 +205,12 @@ class DataSantriController extends Controller
                 Storage::disk('public')->delete($fotoPath);
             }
         }
+        $nis = $santri->nis;
+        $nama = $santri->nama_lengkap;
 
         $santri->delete();
 
-        return response()->json(['message' => 'Data berhasil dihapus!']);
+        return response()->json(['message' => 'Data santri dengan <br>Nama : <strong>' . $nama . '</strong><br>NIS : <strong>' . $nis . '</strong>']);
     }
 
 }

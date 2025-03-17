@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('artikel', function (Blueprint $table) {
+        Schema::create('posts_relation', function (Blueprint $table) {
             $table->integer('id', true);
-            $table->string('judul_artikel', 50)->nullable();
-            $table->dateTime('tgl_artikel')->useCurrentOnUpdate()->default('0000-00-00 00:00:00');
-            $table->char('author_id', 36)->nullable();
-            $table->string('url_gambar')->nullable();
-            $table->text('isi_artikel')->nullable();
-            $table->string('slug')->nullable();
+            $table->integer('post_id')->nullable()->index('fkpost');
+            $table->integer('subcategory_id')->nullable()->index('fksubcategory');
+            $table->integer('tag_id')->nullable()->index('fktag');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('artikel');
+        Schema::dropIfExists('posts_relation');
     }
 };

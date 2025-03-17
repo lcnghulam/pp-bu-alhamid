@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pendidikan', function (Blueprint $table) {
+        Schema::create('posts_tag', function (Blueprint $table) {
             $table->integer('id', true);
-            $table->string('nama_pendidikan', 30)->nullable();
-            $table->enum('jenis_pendidikan', ['Formal', 'Informal'])->nullable();
-            $table->timestamp('created_at')->useCurrentOnUpdate()->useCurrent();
-            $table->timestamp('updated_at')->nullable();
+            $table->string('tag', 50)->nullable();
+            $table->timestamp('created_at')->nullable()->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrent();
         });
     }
 
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pendidikan');
+        Schema::dropIfExists('posts_tag');
     }
 };

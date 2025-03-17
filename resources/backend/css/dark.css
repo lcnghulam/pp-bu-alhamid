@@ -34856,7 +34856,7 @@ table.dataTable.fixedHeader-locked {
 .choices__list--multiple .choices__item {
     background-color: #3b7ddd;
     border: 1px solid #3076db;
-    color: #222e3c
+    color: #fff
 }
 
 .choices__list--multiple .choices__item.is-highlighted {

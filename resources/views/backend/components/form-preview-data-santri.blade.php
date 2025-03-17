@@ -48,7 +48,7 @@
             @if (Route::is('data-santri.tambah') || empty($dataEdit->foto))
             <img src="{{ Vite::asset('resources/backend/img/blank-profile.png') }}" alt="blank-profile" id="PVfoto" style="width: auto; max-width: 100%; height: auto; max-height: 250px; object-fit: contain; display: block; margin: auto;">
             @else
-            <img src="{{ asset('storage/data-santri/' . ($dataEdit->foto)) }}" alt="Foto NIS {{ $dataEdit->nama_lengkap }}" id="PVfoto" style="width: auto; max-width: 100%; height: auto; max-height: 250px; object-fit: contain; display: block; margin: auto;">    
+            <img src="{{ asset('storage/data-santri/' . $dataEdit->foto) }}" alt="Foto NIS {{ $dataEdit->nama_lengkap }}" id="PVfoto" style="width: auto; max-width: 100%; height: auto; max-height: 250px; object-fit: contain; display: block; margin: auto;">    
             @endif
         </div>
     </div>

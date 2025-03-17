@@ -14,14 +14,17 @@ scriptJQuery.onload = function () {
     loadScript(dataTables, function () {
         console.log("✅ DataTables berhasil dimuat!");
 
+        // Muat DataTables Buttons dan semua ekstensi
+
         console.log("✅ Semua ekstensi DataTables berhasil dimuat!");
 
         // Inisialisasi DataTables setelah semua ekstensi dimuat
         $(document).ready(function () {
             console.log("✅ DataTables siap digunakan!");
 
-            var tableSantri = $("#tabelDataSantri").DataTable({
+            var tablePosts = $("#tabelPosts").DataTable({
                 processing: true,
+                // serverSide: false,
                 responsive: true,
                 dom:
                     '<"row my-2"<"col-md-6"l><"col-md-6 text-end"f>>' +
@@ -32,7 +35,7 @@ scriptJQuery.onload = function () {
                     {
                         extend: 'copy',
                         exportOptions: {
-                            columns: ':not(:last-child)' // Tidak menyertakan kolom terakhir (aksi)
+                            columns: ':not(:last-child)'
                         }
                     },
                     {
@@ -62,10 +65,10 @@ scriptJQuery.onload = function () {
                 ],
                 lengthMenu: [10, 25, 50, 100], // Menampilkan opsi jumlah data
                 ajax: {
-                    url: "/data-santri/data", // Pastikan route sesuai dengan Laravel
+                    url: "/posts/data", // Pastikan route sesuai dengan Laravel
                     type: "GET",
                     beforeSend: function () {
-                        console.log("📡 AJAX Request dikirim ke:", "/data-santri/data");
+                        console.log("📡 AJAX Request dikirim ke:", "/posts/data");
                     },
                     error: function (xhr, status, error) {
                         let errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "Terjadi kesalahan pada server.";
@@ -75,15 +78,18 @@ scriptJQuery.onload = function () {
                     }
                 },
                 columns: [
-                    { data: "foto", name: "foto", orderable: false, searchable: false },
-                    { data: "nama_santri", name: "nama_santri" },
-                    { data: "data_santri", name: "data_santri" },
-                    { data: "status", name: "status" },
-                    { data: "aksi", name: "aksi", orderable: false, searchable: false }
+                    { data: "title", name: "post_judul" },
+                    { data: "category", name: "post_category" },
+                    { data: "sub_category", name: "posts_relations.posts_subcategory.sub_category" }, // Untuk sorting & search
+                    { data: "tag", name: "posts_relations.posts_tag.tag" }, // Untuk sorting & search
+                    { data: "author", name: "author.name" },
+                    { data: "date", name: "post_date" },
+                    { data: "status", name: "post_status" },
+                    { data: "aksi", orderable: false, searchable: false }
                 ],
                 order: [],
                 drawCallback: function () {
-                    $("#tabelDataSantri tbody td:nth-child(5)").addClass("table-action");
+                    $("#tabelPosts tbody td:nth-child(8)").addClass("table-action");
 
                     // Pastikan Feather Icons diganti ulang
                     if (typeof feather !== "undefined") {
@@ -93,9 +99,10 @@ scriptJQuery.onload = function () {
             });
 
             // Tambahkan tombol export ke dalam UI
-            tableSantri.buttons().container().appendTo("#tabelDataSantri_wrapper .col-md-12:eq(0)");
+            tablePosts.buttons().container().appendTo("#tabelPosts_wrapper .col-md-12:eq(0)");
         });
     });
+
 };
 
 // Tambahkan script jQuery ke body
@@ -111,35 +118,19 @@ function loadScript(src, callback) {
 
 $(document).ready(function(){
     $('#btnTambah').on('click',function(){
-        window.location.href = "data-santri/tambah";
+        window.location.href = "posts/tambah";
     })
 
     $('#btnRefresh').on('click', function () {
-        $('#tabelDataSantri').DataTable().ajax.reload(); // Reload DataTable
+        $('#tabelPosts').DataTable().ajax.reload(); // Reload DataTable
     });
 
-    $('#tabelDataSantri').on('click', '#btnEdit', function(){
-        let nis = $(this).data('id');
-
-        if (!nis) {
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "NIS tidak ditemukan!",
-            });
-            return;
-        } else {
-            window.location.href = "/data-santri/edit?nis=" + nis;
-        } 
-    
-    });    
-
-    $('#tabelDataSantri').on('click', '#btnDestroy', function () {
-        let nis = $(this).data('id'); // Ambil NIS dari atribut data-id
+    $('#tabelPosts').on('click', '#btnDestroy', function () {
+        let id = $(this).data('id');
     
         Swal.fire({
-            title: "Hapus Data Santri?",
-            text: "Data santri yg dipilih akan dihapus!",
+            title: "Hapus Post?",
+            text: "Post yg dipilih akan dihapus!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
@@ -149,21 +140,28 @@ $(document).ready(function(){
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/data-santri/destroy",
+                    url: "/posts/destroy",
                     type: "DELETE",
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'), // CSRF Token
-                        nis: nis
+                        id: id
                     },
                     success: function (response) {
-                        Swal.fire("Telah dihapus!", response.message, "success");
-                        $('#tabelDataSantri').DataTable().ajax.reload(); // Reload DataTable
+                        if (response.success) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Telah dihapus!",
+                                html: response.message
+                            }).then(() => {
+                                $('#tabelPosts').DataTable().ajax.reload();
+                            });
+                        }
                     },
                     error: function (xhr) {
-                        Swal.fire("Error!", "Gagal menghapus Data Santri.", "error");
+                        Swal.fire("Error!", "Gagal menghapus Post.", "error");
                     }
                 });
             }
         });
-    });    
+    });  
 })

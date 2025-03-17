@@ -2,7 +2,7 @@
     $navData = getNavigationData();
 @endphp
 
-<div class="card mt-3 mb-2">
+<div class="card mt-3 mb-2" style="border-radius: 0;">
     @php
         $segments = request()->segments();
         $url = '';

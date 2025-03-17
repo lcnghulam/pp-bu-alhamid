@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('model_names', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::create('posts_subcategory', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->string('category', 50)->nullable();
+            $table->timestamp('created_at')->nullable()->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrent();
         });
     }
 
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('model_names');
+        Schema::dropIfExists('posts_subcategory');
     }
 };

@@ -121,17 +121,25 @@ $(document).ready(function(){
     $('#tabelDataSantri').on('click', '#btnEdit', function(){
         let nis = $(this).data('id');
 
-        if (!nis) {
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "NIS tidak ditemukan!",
-            });
-            return;
-        } else {
-            window.location.href = "/data-santri/edit?nis=" + nis;
-        } 
-    
+        $.ajax({
+            url: '/data-santri/edit',
+            type: 'get',
+            data: {nis: nis},
+            success: function (response) {
+                if (response.success) {
+                    window.location.href = "/data-santri/edit?nis=" + nis
+                }
+            },
+            error: function (response) {
+                let errorMessage = response.responseJSON?.message || "Terjadi kesalahan!";
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: errorMessage,
+                });
+            }
+        })
+        
     });    
 
     $('#tabelDataSantri').on('click', '#btnDestroy', function () {

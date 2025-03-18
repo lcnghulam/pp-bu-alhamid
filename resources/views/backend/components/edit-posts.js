@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    // Upload & Preview Foto dengan Validasi Ukuran Maksimal 200KB
     const blankImg = document.getElementById("PVfoto").src;
     let fotoInput = document.getElementById("postImg");
     let previewFoto = document.getElementById("PVfoto");
@@ -87,8 +88,9 @@ $(document).ready(function(){
     })
 
     // Submit & Validation
-    $('#formTambahPost').on('submit', function(event){
+    $('#formEditPost').on('submit', function(event){
         event.preventDefault();
+        let urlParams = new URLSearchParams(window.location.search).get('post');
         let isiPostField = document.querySelector("input[name='post_isi']");
         isiPostField.value = editor.root.innerHTML;
 
@@ -121,8 +123,8 @@ $(document).ready(function(){
                 text:"Isi Field Post!"
             });
         } else {
-            let formData = new FormData($('#formTambahPost')[0]);
-
+            let formData = new FormData($('#formEditPost')[0]);
+            formData.append('_method', 'PATCH');
             formData.append("post_status", statusValue);
     
             Swal.fire({
@@ -135,7 +137,7 @@ $(document).ready(function(){
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "POST",
-                        url: "/posts/store",
+                        url: "/posts/update?post=" + urlParams,
                         data: formData,
                         processData: false,
                         contentType: false,
@@ -175,20 +177,52 @@ $(document).ready(function(){
         statusValue = 1; // Set status ke Publish
     });
 
+    function resetForm(){
+        const queryString = window.location.search;
+        const thisUrlParams = new URLSearchParams(queryString).get('post');
+        // console.log(thisURL);
+
+        $.ajax({
+            url: '/posts/edit',
+            type: 'get',
+            data: {slug: thisUrlParams},
+            success: function (response) {
+                if (response.success) {
+                    window.location.href = "/posts/edit?post=" + thisUrlParams;
+                    let timerInterval;
+                    Swal.fire({
+                    title: "Sending Request...",
+                    html: "Please Wait....",
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        timerInterval = setInterval(() => {
+                        timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                    })
+                }
+            },
+            error: function (response) {
+                let errorMessage = response.responseJSON?.message || "Terjadi kesalahan!";
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: errorMessage,
+                });
+            }
+        })
+    }
+
     $("#btnBatal").on("click", function () {
         window.location.href = "/posts";
     });
 
-    function resetForm(){
-        $('#formTambahPost')[0].reset();
-
-        $('#formTambahPost').find('.is-valid, .is-invalid').removeClass('is-valid is-invalid');
-
-        $('#PVfoto').attr('src', blankImg);
-        editor.setText('')
-    }
-
     $('#btnReset').on('click', function(){
-        resetForm()
+        resetForm();
     })
 })

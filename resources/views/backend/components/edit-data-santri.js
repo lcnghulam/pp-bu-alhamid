@@ -188,10 +188,8 @@ $(document).ready(function(){
     
         let formData = new FormData($('#formEditSantri')[0]);
         let urlParams = new URLSearchParams(window.location.search);
-        let oldNis = urlParams.get('nis'); // Ambil dari ?nis= di URL
+        let nis = urlParams.get('nis');
 
-        // Ambil NIS baru dari input form
-        let newNis = $('#nis').val(); 
         formData.append('_method', 'PATCH');
     
         Swal.fire({
@@ -204,7 +202,7 @@ $(document).ready(function(){
             if (result.isConfirmed) {
                 $.ajax({
                     type: "POST",
-                    url: "/data-santri/update?nis=" + oldNis, // Pakai query string NIS
+                    url: "/data-santri/update?nis=" + nis, // Pakai query string NIS
                     data: formData,
                     processData: false,
                     contentType: false,
@@ -216,14 +214,9 @@ $(document).ready(function(){
                             icon: "success",
                             title: "Berhasil!",
                             text: response.message
+                        }).then(() => {
+                            window.location.href = "/data-santri";
                         });
-
-                        // Jika NIS berubah, update URL tanpa reload
-                        if (newNis !== oldNis) {
-                            let newUrl = new URL(window.location.href);
-                            newUrl.searchParams.set('nis', newNis);
-                            window.history.replaceState(null, '', newUrl); // Ubah URL tanpa reload
-                        }
                     },
                     error: function(xhr) {
                         Swal.fire({
@@ -244,8 +237,52 @@ $(document).ready(function(){
         $tglKeluar.clear();
     })
     
+    function reload(){
+        const queryString = window.location.search;
+        const thisUrlParams = new URLSearchParams(queryString).get('nis');
+        // console.log(thisURL);
+
+        $.ajax({
+            url: '/data-santri/edit',
+            type: 'get',
+            data: {nis: thisUrlParams},
+            success: function (response) {
+                if (response.success) {
+                    window.location.href = "/data-santri/edit?nis=" + thisUrlParams;
+                    let timerInterval;
+                    Swal.fire({
+                    title: "Sending Request...",
+                    html: "Please Wait....",
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        timerInterval = setInterval(() => {
+                        timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                    })
+                }
+            },
+            error: function (response) {
+                let errorMessage = response.responseJSON?.message || "Terjadi kesalahan!";
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: errorMessage,
+                });
+            }
+        })
+    }
 
     $("#btnBatal").on("click", function () {
         window.location.href = "/data-santri";
+    });
+
+    $("#btnReload").on("click", function () {
+        reload();
     });
 })

@@ -25,6 +25,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/posts/data', [PostsController::class, 'getData'])->name('posts.data');
     Route::get('/posts/tambah', [PostsController::class, 'tambah'])->name('posts.tambah');
     Route::post('/posts/store', [PostsController::class, 'store'])->name('posts.store');
+    Route::get('/posts/edit', [PostsController::class, 'edit'])->name('posts.edit');
+    Route::patch('/posts/update', [PostsController::class, 'update'])->name('posts.update');
     Route::delete('/posts/destroy', [PostsController::class, 'destroy'])->name('posts.destroy');
 });
 

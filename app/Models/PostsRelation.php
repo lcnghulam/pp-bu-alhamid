@@ -42,7 +42,7 @@ class PostsRelation extends Model
 		'tag_id'
 	];
 
-	public function post()
+	public function posts()
 	{
 		return $this->belongsTo(Post::class, 'post_id');
 	}

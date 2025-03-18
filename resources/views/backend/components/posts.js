@@ -125,6 +125,29 @@ $(document).ready(function(){
         $('#tabelPosts').DataTable().ajax.reload(); // Reload DataTable
     });
 
+    $('#tabelPosts').on('click', '#btnEdit', function () {
+        let slug = $(this).data('slug');
+
+        $.ajax({
+            url: '/posts/edit',
+            type: 'get',
+            data: {slug: slug},
+            success: function (response) {
+                if (response.success) {
+                    window.location.href = "/posts/edit?post=" + slug
+                }
+            },
+            error: function (response) {
+                let errorMessage = response.responseJSON?.message || "Terjadi kesalahan!";
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: errorMessage,
+                });
+            }
+        })
+    })
+
     $('#tabelPosts').on('click', '#btnDestroy', function () {
         let id = $(this).data('id');
     

@@ -4,38 +4,32 @@
             <div class="mb-3">
                 <label class="form-label fw-bold" for="post_img">Foto</label>
                 <div class="text-center py-3 mb-3">
-                    <img src="{{ asset('storage/posts/' . $post->post_img) }}" alt="IMG-{{ $post->user()->name }}" id="foto" style="width: auto; max-width: 100%; height: auto; max-height: 250px; object-fit: contain; display: block; margin: auto;">
+                    <img src="{{ asset('storage/posts/' . $post->post_img) }}" alt="IMG-{{ $post->post_img }}" id="PVfoto" style="width: auto; max-width: 100%; height: auto; max-height: 250px; object-fit: contain; display: block; margin: auto;">
                 </div>
-                <input class="form-control" type="file" id="postImg" name="post_img" accept="image/*" required>
+                <input class="form-control" type="file" id="postImg" name="post_img" accept="image/*">
                 <span class="text-muted fst-italic ms-1" style="font-size: 0.6rem; color: #ff5555 !important;">Perhatian: Ukuran file maksimal 1 MB</span>
             </div>
         </div>
         <div class="col-12 col-xl-6">  
             <div class="mb-3">
                 <label class="form-label fw-bold" for="post_judul">Judul</label>
-                <input type="text" class="form-control" id="postJudul" name="post_judul" placeholder="Khutbah Jumat: Nuzulul Qur’an dan Perintah Membaca..." required>
+                <input type="text" class="form-control" id="postJudul" name="post_judul" value="{{ old('post_judul', $post->post_judul) }}" placeholder="Khutbah Jumat: Nuzulul Qur’an dan Perintah Membaca..." required>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold" for="post_category">Kategori</label>
                 <select id="postCategory" name="post_category" class="form-control" required>
-                    <option selected>Pilih...</option>
-                    <option value="Artikel">Artikel</option>
-                    <option value="Berita">Berita</option>
+                    <option selected disabled>Pilih...</option>
+                    <option value="Artikel" {{ old('post_category', $post->post_category) == 'Artikel' ? 'selected' : '' }}>Artikel</option>
+                    <option value="Berita" {{ old('post_category', $post->post_category) == 'Berita' ? 'selected' : '' }}>Berita</option>
                 </select>
             </div>
             <div class="mb-3">
                 <label id="labelSubCategory" class="form-label fw-bold" for="sub_category">Sub Kategori</label>
-                @if (!$subCategory)
-                <div id="subCat1">
-                    <input type="text" id="subCategory1" class="form-control bd-highlight me-2" name="sub_category" placeholder="Nasional / Syariah / Fragmen / Khutbah / ...." required>
-                    <input type="hidden" name="subcat_type" value="new">
-                </div>
-                @else
                 <div id="subCat2">
                     <select id="subCategory2" name="sub_category" class="form-control bd-highlight me-2" required>
-                        <option selected>Pilih...</option>
+                        <option selected disabled>Pilih...</option>
                         @foreach ($subCategory as $sc)
-                            <option value="{{ $sc->id }}">{{ $sc->sub_category }}</option>
+                            <option value="{{ $sc->id }}" {{ old('id', $sc->id) == $subCatId ? 'selected' : '' }}>{{ $sc->sub_category }}</option>
                         @endforeach
                     </select>
                     <div class="form-check form-switch mt-2">
@@ -44,11 +38,10 @@
                     </div>
                     <input type="hidden" name="subcat_type" value="exist">
                 </div>
-                @endif
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold" for="tag">Tag</label>
-                <input type="text" class="form-control" id="tag" name="tag">
+                <input type="text" class="form-control" id="tag" name="tag" value="{{ implode(', ', $selectedTags) }}">
             </div>  
         </div>
     </div>
@@ -101,7 +94,9 @@
                         <button class="ql-clean"></button>
                     </span>
                 </div>
-                <div id="quill-editor"></div>
+                <div id="quill-editor">
+                    {!! $post->post_isi !!}
+                </div>
             </div>
         </div>
     </div>
@@ -120,6 +115,3 @@
         </button>
     </div>
 </form>
-<script>
-    var blankImg = "{{ Vite::asset('resources/backend/img/blank-img.jpg') }}";
-</script>

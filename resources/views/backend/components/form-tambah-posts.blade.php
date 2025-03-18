@@ -18,7 +18,7 @@
             <div class="mb-3">
                 <label class="form-label fw-bold" for="post_category">Kategori</label>
                 <select id="postCategory" name="post_category" class="form-control" required>
-                    <option selected>Pilih...</option>
+                    <option selected disabled>Pilih...</option>
                     <option value="Artikel">Artikel</option>
                     <option value="Berita">Berita</option>
                 </select>
@@ -33,7 +33,7 @@
                 @else
                 <div id="subCat2">
                     <select id="subCategory2" name="sub_category" class="form-control bd-highlight me-2" required>
-                        <option selected>Pilih...</option>
+                        <option selected disabled>Pilih...</option>
                         @foreach ($subCategory as $sc)
                             <option value="{{ $sc->id }}">{{ $sc->sub_category }}</option>
                         @endforeach
@@ -120,6 +120,3 @@
         </button>
     </div>
 </form>
-<script>
-    var blankImg = "{{ Vite::asset('resources/backend/img/blank-img.jpg') }}";
-</script>

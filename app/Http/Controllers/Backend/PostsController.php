@@ -318,6 +318,10 @@ class PostsController extends Controller
                 ]);
             }
 
+            // Delete Unused SubCat & Tag
+            PostsSubCategory::doesntHave('posts_relations')->delete();
+            PostsTag::doesntHave('posts_relations')->delete();
+
             // Start Commit / Execute All to DB
             // dd($validatedPost,$validatedSubCategory,$validatedTag);
             DB::commit();

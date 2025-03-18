@@ -8,11 +8,15 @@
         <div class="col-12 col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">Pie Chart</h5>
+                    <h5 class="card-title">Data Santri</h5>
                 </div>
                 <div class="card-body text-center">
+                    <script>
+                        var santriLaki = @json($santriLaki);
+                        var santriPerempuan = @json($santriPerempuan);
+                    </script>
                     <div class="chart w-100">
-                        <div id="apexcharts-pie" style="max-width: 440px;margin:auto;"></div>
+                        <div id="dataSantri" style="max-width: 440px;margin:auto;"></div>
                     </div>
                 </div>
             </div>

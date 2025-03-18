@@ -1,9 +1,16 @@
 document.addEventListener("DOMContentLoaded", function() {
+    const santriLaki = window.santriLaki;
+    const santriPerempuan = window.santriPerempuan;
+
     // Pie chart
     var options = {
         chart: {
             height: 350,
             type: "donut",
+            labels: {
+                show: true,
+                value: 50
+            },
         },
         legend: {
             labels: {
@@ -11,11 +18,12 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         },
         dataLabels: {
-            enabled: false
+            enabled: true
         },
-        series: [44, 55, 13, 33]
+        series: [santriLaki, santriPerempuan],
+        labels: ['Laki-Laki', 'Perempuan']
     };
 
-    var chart = new ApexCharts(document.querySelector("#apexcharts-pie"), options);
+    var chart = new ApexCharts(document.querySelector("#dataSantri"), options);
     chart.render();
 });

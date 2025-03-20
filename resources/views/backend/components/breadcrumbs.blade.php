@@ -1,5 +1,5 @@
 @php
-    $navData = getNavigationData();
+    $navData = getBackendNavData();
 @endphp
 
 <div class="card mt-3 mb-2" style="border-radius: 0;">

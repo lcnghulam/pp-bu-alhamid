@@ -14,7 +14,7 @@ $(document).ready(function(){
                 Swal.fire({
                     icon: "error",
                     title: "Gagal...",
-                    text: "Ukuran gambar maksimal 200KB!",
+                    text: "Ukuran gambar maksimal 1MB!",
                 });
                 fotoInput.value = ""; // Reset input file
                 previewFoto.src = blankImg; // Kembali ke gambar default

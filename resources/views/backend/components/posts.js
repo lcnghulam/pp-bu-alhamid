@@ -149,7 +149,7 @@ $(document).ready(function(){
     })
 
     $('#tabelPosts').on('click', '#btnDestroy', function () {
-        let id = $(this).data('id');
+        let slug = $(this).data('slug');
     
         Swal.fire({
             title: "Hapus Post?",
@@ -167,7 +167,7 @@ $(document).ready(function(){
                     type: "DELETE",
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'), // CSRF Token
-                        id: id
+                        slug: slug
                     },
                     success: function (response) {
                         if (response.success) {

@@ -47,7 +47,7 @@
 							<h1 class="display-1 fw-bold">{{ $code }}</h1>
 							<p class="h2">{!! $message !!}</p>
 							<p class="lead fw-normal mt-3 mb-4">{{ $message2 }}</p>
-							<a class='btn btn-primary btn-lg' href='javascript:history.back()'>Kembali</a>
+							<a class='btn btn-primary btn-lg' href='{{ getParentRoute() }}'>Kembali</a>
 						</div>
 
 					</div>

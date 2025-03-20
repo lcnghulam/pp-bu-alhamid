@@ -1,32 +1,8 @@
 <?php
 
-// use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Route;
 
-// function isActiveRoute($routeName)
-// {
-//     // Bisa menangani wildcard '*' dalam route
-//     return request()->is($routeName) || \Illuminate\Support\Facades\Route::is($routeName);
-// }
-
-// function set_active($uri, $output = 'active')
-// {
-//     if (is_array($uri)) {
-//         foreach ($uri as $u) {
-//             if (isActiveRoute($u)) {
-//                 return $output;
-//             }
-//         }
-//     } else {
-//         if (isActiveRoute($uri)) {
-//             return $output;
-//         }
-//     }
-
-//     return ''; // Default jika tidak aktif
-// }
-
-
-function getNavigationData()
+function getBackendNavData()
 {
     // Ambil segment URL dari request saat ini
     $segments = request()->segments();
@@ -69,5 +45,31 @@ function getNavigationData()
         'breadcrumbs'  => $breadcrumbs,
         'activeRoutes' => $activeRoutes,
     ];
+}
+
+function getParentRoute()
+{
+    // Coba ambil nama route jika ada
+    $currentRoute = request()->route()?->getName();
+
+    if ($currentRoute) {
+        $parentRoute = explode('.', $currentRoute)[0] ?? null;
+
+        // Jika parent route ditemukan dan terdaftar, arahkan ke parent
+        if ($parentRoute && Route::has($parentRoute)) {
+            return route($parentRoute);
+        }
+    }
+
+    // Jika tidak ada route name, ambil berdasarkan path
+    $segments = explode('/', request()->path());
+
+    // Cek apakah ada segment pertama (misalnya: "posts" dari "/posts/datax")
+    if (!empty($segments[0]) && Route::has($segments[0])) {
+        return route($segments[0]); // Redirect ke parent jika terdaftar
+    }
+
+    // Fallback jika semua gagal
+    return request()->is('dashboard/*') ? route('dashboard') : route('welcome');
 }
 

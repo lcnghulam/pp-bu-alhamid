@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Yajra\DataTables\DataTables;
 
 use App\Models\Post;
 use App\Models\PostsSubCategory;
 use App\Models\PostsTag;
 use App\Models\PostsRelation;
-use Yajra\DataTables\DataTables;
 
 class PostsController extends Controller
 {
@@ -97,7 +99,7 @@ class PostsController extends Controller
         $subCategory = PostsSubCategory::all();
 
         return view('backend.pages.posts.tambah', [ 
-            'title' => 'Tambah Posts', 
+            'title' => 'Tambah Post', 
             'subCategory' => $subCategory, 
         ]);
     }
@@ -137,8 +139,13 @@ class PostsController extends Controller
             $validatedPost['post_date'] = Carbon::now('Asia/Jakarta'); // Waktu sesuai GMT+7
         
             $words = explode('-', Str::slug($validatedPost['post_judul'], '-'));
-            $validatedPost['slug'] = implode('-', array_slice($words, 0, 10));
-        
+            $slug = implode('-', array_slice($words, 0, 10));
+            if (Post::where('slug', $slug)->exists()) {
+                $validatedPost['slug'] = $slug . '-' . uniqid();
+            } else {
+                $validatedPost['slug'] = $slug;
+            }
+
             if ($request->hasFile('post_img')) {
                 $filename = $validatedPost['slug'] . '-' . uniqid() . '.' . $request->file('post_img')->getClientOriginalExtension();
                 $validatedPost['post_img'] = $filename;
@@ -279,7 +286,12 @@ class PostsController extends Controller
             $validatedPost['post_date'] = Carbon::now('Asia/Jakarta'); // Waktu sesuai GMT+7
             
             $words = explode('-', Str::slug($validatedPost['post_judul'], '-'));
-            $validatedPost['slug'] = implode('-', array_slice($words, 0, 10));
+            $slug = implode('-', array_slice($words, 0, 10));
+            if (Post::where('slug', $slug)->exists()) {
+                $validatedPost['slug'] = $slug . '-' . uniqid();
+            } else {
+                $validatedPost['slug'] = $slug;
+            }
         
             $changesPost = [];
             foreach ($validatedPost as $key => $value) {
@@ -357,28 +369,23 @@ class PostsController extends Controller
         try {
             DB::beginTransaction();
 
-            // Cari post berdasarkan ID, jika tidak ditemukan, lempar error 404
-            $post = Post::findOrFail($request->id);
+            $post = Post::where('slug', $request->slug)->first();
+            // dd($post);
 
-            // Ambil semua relasi post yang terkait
             $postRelations = PostsRelation::where('post_id', $post->id)->get();
 
-            // Simpan judul & author untuk response
             $title = $post->post_judul;
-            $author = $post->author->name ?? 'Unknown'; // Gunakan relasi author jika ada
+            $author = $post->author->name;
 
-            // Loop setiap relasi untuk cek sub_category & tag
             foreach ($postRelations as $relation) {
-                // Cek apakah sub_category digunakan di post lain
                 $isSubCategoryUsed = PostsRelation::where('subcategory_id', $relation->subcategory_id)
-                    ->where('post_id', '!=', $post->id) // Cek selain post yang akan dihapus
+                    ->where('post_id', '!=', $post->id)
                     ->exists();
 
                 if (!$isSubCategoryUsed) {
                     PostsSubCategory::where('id', $relation->subcategory_id)->delete();
                 }
 
-                // Cek apakah tag digunakan di post lain
                 $isTagUsed = PostsRelation::where('tag_id', $relation->tag_id)
                     ->where('post_id', '!=', $post->id)
                     ->exists();
@@ -388,19 +395,15 @@ class PostsController extends Controller
                 }
             }
 
-            // Hapus semua relasi post_id di tabel posts_relations
             PostsRelation::where('post_id', $post->id)->delete();
 
-            // Simpan nama foto sebelum menghapus post
             $fotoPath = $post->post_img ? "posts/{$post->post_img}" : null;
 
-            // Hapus post
             $post->delete();
 
             // Commit transaksi
             DB::commit();
 
-            // Setelah commit, hapus foto jika ada
             if ($fotoPath && Storage::disk('public')->exists($fotoPath)) {
                 Storage::disk('public')->delete($fotoPath);
             }

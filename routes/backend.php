@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard2', [DashboardController::class, 'index2'])->name('dashboard2');
     Route::get('/dashboard/data-santri', [DashboardController::class, 'getDataSantri'])->name('dashboard.data-santri');
     Route::get('/dashboard/posts', [DashboardController::class, 'getDataPosts'])->name('dashboard.posts');
     // Data Santri

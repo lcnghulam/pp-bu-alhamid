@@ -1,4 +1,4 @@
-$(document).ready(function(){
+document.addEventListener("DOMContentLoaded", function() {
     $("label.form-label").html(function(_, html) {
         return html.replace("*", "<span style='color:red;'>*</span>");
     });
@@ -193,7 +193,7 @@ $(document).ready(function(){
                                 title: "Sukses!",
                                 text: response.message
                             }).then(() => {
-                                resetForm();
+                                window.location.href = '/data-santri'
                             });
                         }
                     },

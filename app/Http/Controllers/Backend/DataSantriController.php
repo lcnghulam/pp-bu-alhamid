@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\PostsSubcategory;
 use App\Models\Santri;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class DataSantriController extends Controller
@@ -15,14 +15,6 @@ class DataSantriController extends Controller
     public function index()
     {
         return view('backend.pages.data-santri', [ 'title' => 'Data Santri' ]);
-        // $title = 'Data Santri';
-        // return view('backend.pages.data-santri')
-        //     ->with(compact('title'));
-
-
-        // Kesimpulan :
-        // ['title' => 'Data Santri'] or ->with(compact('title') sama saja
-        // yg dikirim ke blade adalah $title
     }
 
     public function getData(Request $request)
@@ -86,7 +78,44 @@ class DataSantriController extends Controller
 
     public function tambah(Request $request)
     {
-        return view('backend.pages.data-santri.tambah',['title' => 'Tambah Data Santri']);
+        // - NIS Generator -
+        $zone = 'Asia/Jakarta';
+        $currentYear = Carbon::now($zone)->format('y'); // last 2 digits
+        $prevYear = str_pad($currentYear - 1, 2, '0', STR_PAD_LEFT);
+        $currentMonth = Carbon::now($zone)->format('m'); // last 2 digits
+
+        // Thn Ajaran
+        $tahunAjaran = ($currentMonth < 7) ? "{$prevYear}{$currentYear}" : "{$currentYear}" . str_pad($currentYear + 1, 2, '0', STR_PAD_LEFT);
+        
+        $lastReg = Santri::where('nis', 'LIKE', "{$tahunAjaran}{$currentMonth}%")
+                ->latest('nis')
+                ->first();
+
+        if ($lastReg) {
+        $lastNumb = intval(substr($lastReg->nis, -4)) + 1;
+        } else {
+        $lastNumb = 1; // RegNumb Restart
+        }
+
+        // Pastikan nomor urut tetap 4 digit (0001, 0002, dst.)
+        $startReg = str_pad($lastNumb, 4, '0', STR_PAD_LEFT);
+        
+        $finalReg = $tahunAjaran.$currentMonth.$startReg;
+        // dd($finalReg);
+        
+
+        return view('backend.pages.data-santri.tambah',[
+            'title' => 'Tambah Data Santri',
+            'newNis' => $finalReg
+        ]);
+
+        // return response()->json([
+        //     'view' => view('backend.pages.data-santri.tambah', [
+        //         'newNis' => $finalReg,
+        //         'title' => 'Tambah Data Santri' // Tambahkan ini ke dalam view
+        //     ])->render(),
+        //     'title' => 'Tambah Data Santri'
+        // ]);
     }
 
     public function store(Request $request)
@@ -101,7 +130,7 @@ class DataSantriController extends Controller
             'email'         => 'nullable|email|unique:santri,email',
             'no_hp'         => 'required|string|max:255',
             'alamat'        => 'required|string',
-            'foto'          => 'nullable|image|mimes:jpg,png,jpeg|max:200',
+            'foto'          => 'nullable|image|mimes:jpg,png,jpeg,webp,svg|max:200',
             'tgl_masuk'     => 'required|date',
             'tgl_keluar'    => 'nullable|date|after_or_equal:tgl_masuk',
         ]);
@@ -137,20 +166,26 @@ class DataSantriController extends Controller
                     'message' => 'Data tidak ditemukan!'
                 ], 404);
             }
-            
-            session(['edit_santri_allowed' => true]);
+
+            if (!Auth::user()->hasRole('superadmin')) {
+                session(['edit_santri_allowed' => true]);
+            }
 
             return response()->json([
                 'success' => true
             ]);
         } 
 
-        if (!session()->has('edit_santri_allowed')) {
-            abort(403);
+        // dd(Auth::user()->hasRole('superadmin'));
+        if (!Auth::user()->hasRole('superadmin')) {
+
+            session()->forget('edit_santri_allowed');
+            
+            if (!session()->has('edit_santri_allowed')) {
+                abort(403);
+            }
         }
 
-        session()->forget('edit_santri_allowed');
-        
         $santri = Santri::where('nis', $request->query('nis'))->first();
 
         if (!$santri) {

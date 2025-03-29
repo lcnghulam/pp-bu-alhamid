@@ -2428,6 +2428,11 @@ progress {
     cursor: pointer
 }
 
+input:read-only {
+    background-color: #4e5863;
+    opacity: 1;
+}
+
 .form-control:focus {
     background-color: #222e3c;
     border-color: #9dbeee;

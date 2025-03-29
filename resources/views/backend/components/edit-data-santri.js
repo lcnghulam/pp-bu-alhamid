@@ -1,5 +1,4 @@
-
-$(document).ready(function(){
+document.addEventListener("DOMContentLoaded", function() {
     $("label.form-label").html(function(_, html) {
         return html.replace("*", "<span style='color:red;'>*</span>");
     });
@@ -133,7 +132,7 @@ $(document).ready(function(){
                 $("#PVtgl_keluar").val(inputAlt.val());
             }
         });
-
+    
     // Upload & Preview Foto dengan Validasi Ukuran Maksimal 200KB
     let fotoInput = document.getElementById("foto");
     let previewFoto = document.getElementById("PVfoto");
@@ -236,7 +235,7 @@ $(document).ready(function(){
         
         $tglKeluar.clear();
     })
-    
+
     function reload(){
         const queryString = window.location.search;
         const thisUrlParams = new URLSearchParams(queryString).get('nis');

@@ -110,7 +110,7 @@ function loadScript(src, callback) {
 }
 
 $(document).ready(function(){
-    $('#btnTambah').on('click',function(){
+    $(document).on('click', '#btnTambah',function(){
         window.location.href = "data-santri/tambah";
     })
 

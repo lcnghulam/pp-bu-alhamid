@@ -23,11 +23,17 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        /** 
+         * Umum
+         */
         // Active Nav Submission
         Blade::directive('active', function ($route) {
             return "<?php echo \Illuminate\Support\Str::startsWith(Route::currentRouteName(), $route) ? 'active' : ''; ?>";
         });
 
+        /** 
+         * Frontend
+         */
         // Subcat
         View::composer([
             'frontend.components.footer', 
@@ -42,5 +48,10 @@ class ViewServiceProvider extends ServiceProvider
     
             $view->with('mostSubCat', $subCat);
         });
+
+        /**
+         * Backend
+         */
+        
     }
 }

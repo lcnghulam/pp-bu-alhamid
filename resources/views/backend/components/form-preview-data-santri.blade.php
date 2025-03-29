@@ -2,7 +2,11 @@
     <div class="row">
         <div class="mb-3">
             <label class="form-label" for="PVnis">NIS (Nomor Induk Santri)*</label>
+            @if (Route::is('data-santri.tambah'))
+            <input type="text" class="form-control" id="PVnis" value="{{ $newNis }}" disabled>    
+            @else
             <input type="text" class="form-control" id="PVnis" value="{{ Route::is('data-santri.edit') ? $santri->nis : '' }}" disabled>
+            @endif
         </div>
         <div class="mb-3">
             <label class="form-label" for="PVnik">NIK*</label>

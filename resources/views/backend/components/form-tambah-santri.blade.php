@@ -1,8 +1,8 @@
 <form id="formTambahSantri">
     <div class="row">
         <div class="mb-3">
-            <label class="form-label" for="nis">NIS (Nomor Induk Santri)*</label>
-            <input type="number" class="form-control" id="nis" name="nis" placeholder="25000000000001" required>
+            <label class="form-label" for="nis">NIS (Nomor Induk Santri)* <strong class="fst-italic">(Auto)</strong></label>
+            <input type="number" class="form-control" id="nis" name="nis" placeholder="25000000000001" value="{{ $newNis }}" readonly required>
         </div>
         <div class="mb-3">
             <label class="form-label" for="nik">NIK*</label>

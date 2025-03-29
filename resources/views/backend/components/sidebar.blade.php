@@ -35,6 +35,24 @@
                     <span class="align-middle">Jadwal</span>
                 </a>
             </li>
+            <li class="sidebar-item">
+                <a class='sidebar-link' href='#'>
+                    <i class="align-middle" data-feather="image"></i> 
+                    <span class="align-middle">Galeri</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class='sidebar-link' href='#'>
+                    <i class="align-middle" data-feather="paperclip"></i> 
+                    <span class="align-middle">Pengumuman</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class='sidebar-link' href='#'>
+                    <i class="align-middle" data-feather="archive"></i> 
+                    <span class="align-middle">Arsip</span>
+                </a>
+            </li>
         </ul>
     </div>
 </nav>

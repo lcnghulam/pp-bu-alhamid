@@ -14,7 +14,16 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, HasUuids;
+    
+    use HasFactory, Notifiable, HasUuids, HasRoles;
+
+    /**
+     * Spatie Role Methods for Intelephense Auto-completion
+     * 
+     * @method bool hasRole(string|array $roles)
+     * @method bool hasAnyRole(array|string ...$roles)
+     * @method \Illuminate\Database\Eloquent\Collection getRoleNames()
+     */
 
     public $incrementing = false; // Non-incrementing key
     protected $keyType = 'string'; // Set keyType sebagai string (UUID)
